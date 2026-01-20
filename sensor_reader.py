@@ -31,6 +31,8 @@ import math
 MEAN_EARTH_RADIUS_M = 6371009
 SENSOR_FILE_CSV = "SensorData1.csv"
 SENSOR_FILE_JSON = "SensorData2.json"
+OUTPUT_FILE_CSV = "GenuineDetections.csv"
+SENSOR_ACCURACY_M = 100
 
 
 def haversine_distance(lat1, lon1, lat2, lon2):
@@ -67,3 +69,37 @@ def read_json_sensor_data(file_path):
     with open(file_path, mode='r') as json_file:
         sensor_data = json.load(json_file)
     return sensor_data
+
+
+def find_genuine_detections(sensor_data_csv, sensor_data_json):
+    """Find genuine detections between two sensor datasets, return as a list of dictionaries"""
+    genuine_detections = []
+    # The distance threshold for genuine detection is twice the sensor accuracy distance
+    threshold_distance = SENSOR_ACCURACY_M * 2
+
+    # Compare each reading from CSV with each reading from JSON, calculate the distance, and check if within threshold
+    for data_csv in sensor_data_csv:
+        for data_json in sensor_data_json:
+            distance = haversine_distance(
+                data_csv['latitude'], data_csv['longitude'],
+                data_json['latitude'], data_json['longitude']
+            )
+            if distance <= threshold_distance:
+                genuine_detections.append({
+                    'sensor1_id': data_csv['id'],
+                    'sensor2_id': data_json['id']
+                })
+    return genuine_detections
+
+
+def write_genuine_detections_to_csv(genuine_detections, output_file):
+    """Write the genuine detections to a CSV file"""
+    with open(output_file, mode='w', newline='') as csv_file:
+        # Define the CSV field names and write the header
+        field_names = ['sensor1_id', 'sensor2_id']
+        writer = csv.DictWriter(csv_file, fieldnames=field_names)
+        writer.writeheader()
+        # Write each genuine detection as a row in the CSV file
+        for detection in genuine_detections:
+            writer.writerow(detection)
+
