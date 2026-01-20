@@ -29,8 +29,8 @@ import math
 
 # Constants
 MEAN_EARTH_RADIUS_M = 6371009
-SENSOR_FILE_CSV = "SensorData1.csv"
-SENSOR_FILE_JSON = "SensorData2.json"
+SENSOR_FILE_1 = "SensorData1.csv"
+SENSOR_FILE_2 = "SensorData2.json"
 OUTPUT_FILE_CSV = "GenuineDetections.csv"
 SENSOR_ACCURACY_M = 100
 
@@ -103,3 +103,24 @@ def write_genuine_detections_to_csv(genuine_detections, output_file):
         for detection in genuine_detections:
             writer.writerow(detection)
 
+
+def main():
+    # Read sensor data from files
+    sensor_data_1 = read_csv_sensor_data(SENSOR_FILE_1)
+    sensor_data_2 = read_json_sensor_data(SENSOR_FILE_2)
+
+    # Find genuine detections
+    genuine_detections = find_genuine_detections(sensor_data_1, sensor_data_2)
+
+    # Output genuine detections to terminal
+    print(f"Found {len(genuine_detections)} genuine detection(s):")
+    for detection in genuine_detections:
+        print(f"Sensor 1 ID: {detection['sensor1_id']}, Sensor 2 ID: {detection['sensor2_id']}")
+
+    # Write to the output CSV file
+    write_genuine_detections_to_csv(genuine_detections, OUTPUT_FILE_CSV)
+    print(f"Genuine detections written to {OUTPUT_FILE_CSV}")
+
+
+if __name__ == "__main__":
+    main()
