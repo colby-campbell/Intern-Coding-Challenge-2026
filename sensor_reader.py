@@ -46,3 +46,24 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     a = (math.sin(delta1_rad) ** 2 + math.sin(delta2_rad) ** 2 * math.cos(lat1_rad) * math.cos(lat2_rad))
     distance = 2 * math.asin(math.sqrt(a)) * MEAN_EARTH_RADIUS_M
     return distance
+
+
+def read_csv_sensor_data(file_path):
+    """Read sensor data from a CSV file and return as a list of dictionaries"""
+    sensor_data = []
+    with open(file_path, mode='r') as csv_file:
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            sensor_data.append({
+                'id': row['id'],
+                'latitude': float(row['latitude']),
+                'longitude': float(row['longitude'])
+            })
+    return sensor_data
+
+
+def read_json_sensor_data(file_path):
+    """Read sensor data from a JSON file and return as a list of dictionaries"""
+    with open(file_path, mode='r') as json_file:
+        sensor_data = json.load(json_file)
+    return sensor_data
