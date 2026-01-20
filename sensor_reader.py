@@ -27,3 +27,22 @@ import csv
 import json
 import math
 
+# Constants
+MEAN_EARTH_RADIUS_M = 6371009
+SENSOR_FILE_CSV = "SensorData1.csv"
+SENSOR_FILE_JSON = "SensorData2.json"
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """Calculate the Haversine distance between two points"""
+
+    # Convert latitude and longitude from degrees to radians to use in the trigonometric functions
+    lat1_rad = math.radians(lat1)
+    lat2_rad = math.radians(lat2)
+    delta1_rad = math.radians(lat2 - lat1) / 2
+    delta2_rad = math.radians(lon2 - lon1) / 2
+
+    # Haversine formula
+    a = (math.sin(delta1_rad) ** 2 + math.sin(delta2_rad) ** 2 * math.cos(lat1_rad) * math.cos(lat2_rad))
+    distance = 2 * math.asin(math.sqrt(a)) * MEAN_EARTH_RADIUS_M
+    return distance
